@@ -1,0 +1,41 @@
+/* styles.module.css */
+.container {
+  height: 70px;
+  width: 100vw;
+  padding-right: 15px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: -2rem;
+  gap: 6px;
+  background-color: #CCCCCC; /* Grey background color */
+}
+
+.text {
+  color: #7e22e0; /* Purple-400 */
+  font-size: 10px;
+  font-weight: normal;
+  font-family: 'Aeonik', sans-serif;
+}
+
+.button {
+  width: 120px;
+  height: 30px;
+  padding: 4px 10px;
+  background: linear-gradient(to left, #7e22e0, #000);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: po;
+}
+
+.buttonText {
+  color: white;
+  font-size: 10px;
+  font-weight: medium;
+  font-family: 'Aeonik', sans-serif;
+  line-height: 1.2;
+  letter-spacing: 1px;
+}

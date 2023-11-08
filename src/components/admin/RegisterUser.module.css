@@ -1,0 +1,172 @@
+
+ /* RegisterUser.module.css */
+.container {
+  width: 100vw;
+  height: 600px;
+  padding: 8px;
+  background: linear-gradient(to bottom left, #4B82F4, #9C1AEC, #F93472);
+  border-radius: 5px;
+  border: 2px solid #A9A9A9;
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 3px;
+}
+
+.backButton {
+  color: white;
+  font-size: 20px;
+  font-weight: medium;
+  background-color: #191919;
+  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
+  margin: 1rem 0 2rem -32rem;
+  border: 2px solid #A9A9A9;
+  padding: 6px 1rem;
+  border-radius:10px;
+ 
+}
+
+.title {
+  text-align: center;
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
+  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
+}
+
+.description {
+  text-align: center;
+  color: white;
+  font-size: 18px;
+  font-weight: medium;
+  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
+}
+
+.form {
+  flex: 7;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.input {
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0;
+  padding-top: 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* inline-flex: 0; */
+}
+
+.label {
+  padding: 2px;
+  opacity: 0;
+  background: #6B6B6B;
+  border-radius: 10px;
+  color: #A9A9A9;
+  font-size: 14px;
+  font-weight: normal;
+  font-family: 'Aeonik', sans-serif;
+  letter-spacing: 0.05em;
+  line-height: 1.25;
+}
+
+.inputField {
+  flex: 1;
+  width: 300px;
+  height: 12px;
+  padding: 0.5rem;
+  background: #3D3D3D;
+  color: white;
+  border-radius: 10px;
+  border: 2px solid #D9D9D9;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2px;
+  display: inline-flex;
+}
+
+.checkbox {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
+  /* inline-flex: 0; */
+}
+
+.checkboxIcon {
+  padding: 1px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 1px;
+  display: flex;
+  background: #D4D4D4;
+  border-radius: 5px;
+  box-shadow: 0px 0px 3px #9C1AEC;
+  margin-top: 1rem;
+}
+
+.checkboxText {
+  color: #A9A9A9;
+  font-size: 14px;
+  font-weight: medium;
+  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
+  letter-spacing: 0.05em;
+  line-height: 1.25;
+  margin-top: 1rem;
+}
+
+.submitButton {
+  width: 600px;
+  height: 60px;
+  background: linear-gradient(to left, #9C1AEC, #4B82F4);
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  display: inline-flex;
+  color: white;
+  font-size: 18px;
+  font-weight: medium;
+  font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
+  margin-top: 1rem;
+  border: 1px solid #A9A9A9;
+  padding: 1rem 10px;
+  border-radius: 20px;
+}
+
+.submitButton:hover {
+  background: linear-gradient(to left, #9C1AEC, #4B82F4);
+}
+
+.divider {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0px;
+  position: relative;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 0;
+}
+

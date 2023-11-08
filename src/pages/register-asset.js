@@ -1,7 +1,8 @@
-import React from "react";
+import NewAssetForm from "@/components/register-asset/NewAssetForm";
 
 const RegisterAsset = () => {
-  return <div>RegisterAsset</div>;
+  return;
+  <NewAssetForm />;
 };
 
 export default RegisterAsset;

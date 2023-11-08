@@ -7,7 +7,7 @@ const nextConfig = {
       "ipfs.infura.io",
       "infura-ipfs.io",
     ],
-    formats: ["image/webp"],
+    // formats: ["image/webp"],
   },
 };
 

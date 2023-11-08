@@ -1,0 +1,86 @@
+.container {
+    background-color: black;
+    width: 100vw;
+    position: relative;
+    justify-content: space-between;
+    align-items: flex-start;
+    display: flex;
+    padding-left: 3rem;
+    padding-top: 2rem;
+    margin-top: 500px;
+  }
+
+.sectionInfo {
+    height: 300px;
+    justify-content: flex-end;
+    align-items: flex-start;
+    display: flex;
+    padding: 10px;
+  }
+
+  .logo{
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-family: 'Neue Haas Grotesk Display Pro';
+    color: #3FDAC5;
+  
+  }
+  
+  .exploreSection,
+  .aboutSection,
+  .hireTalentSection,
+  .navigateToSection , 
+  .h1{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin: 1rem;
+    gap: 4px;
+  }
+  
+  .heading {
+    text-align: left;
+    font-weight: bold;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-family: 'Neue Haas Grotesk Display Pro';
+    letter-spacing: 0.05em;
+    color: #3FDAC5;
+  }
+  
+  .subHeading {
+    text-align: left;
+    font-size: 18px;
+    font-weight: medium;
+    font-family: 'Neue Haas Grotesk Display Pro';
+    color: #979797;
+  }
+  
+  .link {
+    text-align: left;
+    font-size: 16px;
+    font-weight: medium;
+    font-family: 'Neue Haas Grotesk Display Pro';
+    color: #979797;
+    cursor: pointer;
+  }
+
+/* textBlock.module.css */
+.textBlock {
+  width: 500px;
+  height: 44px;
+  color: #979797; 
+  font-size: 16px;
+  font-weight: medium;
+  font-family: 'Neue Haas Grotesk Display Pro';
+  line-height: 2;
+}
+
+.img{
+  width: 200px;
+  height: 100px;
+}
+
