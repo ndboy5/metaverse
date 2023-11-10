@@ -1,58 +1,53 @@
-// marketSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchItems, createItem } from "../../utils/contract";
+import { ethers } from "ethers";
 
-// Async thunk for fetching items
-export const fetchItemsAsync = createAsyncThunk(
-  "market/fetchItems",
-  async () => {
-    const items = await fetchItems();
-    return items;
+// Define the initial state for the market slice
+const initialState = {
+  marketItems: [],
+  isLoading: false,
+  error: null,
+};
+
+// Async thunk to fetch market items from the blockchain
+export const fetchMarketItems = createAsyncThunk(
+  "market/fetchMarketItems",
+  async (_, { getState }) => {
+    const state = getState();
+    // Get the contract instance from state
+    const { NFTMarketContract } = state.connection;
+    const items = await NFTMarketContract.fetchMarketItems();
+    // Serialize items to match the structure expected by the frontend
+    return items.map((item) => ({
+      status: item.status,
+      nftContract: item.nftContract,
+      owner: item.owner,
+      creator: item.creator,
+      token: item.token.toNumber(),
+      price: ethers.utils.formatEther(item.price),
+    }));
   }
 );
 
-// Async thunk for creating an item
-export const createItemAsync = createAsyncThunk(
-  "market/createItem",
-  async ({ url, price }) => {
-    await createItem(url, price);
-    const items = await fetchItems();
-    return items;
-  }
-);
-
+// Create the market slice
 export const marketSlice = createSlice({
   name: "market",
-  initialState: {
-    items: [],
-    status: "idle",
-    error: null,
+  initialState,
+  reducers: {
+    // Reducers go here
   },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchItemsAsync.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchItemsAsync.fulfilled, (state, action) => {
-        state.status = "idle";
-        state.items = action.payload;
-      })
-      .addCase(fetchItemsAsync.rejected, (state, action) => {
-        state.status = "idle";
-        state.error = action.error.message;
-      })
-      .addCase(createItemAsync.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(createItemAsync.fulfilled, (state, action) => {
-        state.status = "idle";
-        state.items = action.payload;
-      })
-      .addCase(createItemAsync.rejected, (state, action) => {
-        state.status = "idle";
-        state.error = action.error.message;
-      });
+  extraReducers: {
+    [fetchMarketItems.pending]: (state) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    [fetchMarketItems.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.marketItems = action.payload;
+    },
+    [fetchMarketItems.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.error;
+    },
   },
 });
 

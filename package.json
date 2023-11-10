@@ -15,6 +15,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "axios": "^0.27.2",
     "chai": "^4.3.10",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.3.1",
     "ethereum-waffle": "^4.0.10",
     "ethers": "^5.7.2",

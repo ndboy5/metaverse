@@ -5,19 +5,27 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./NFT.sol";
 
 
-contract NFTMarket is ReentrancyGuard {
+contract NFTMarket is AccessControl, ReentrancyGuard {
     using Counters for Counters.Counter;
     Counters.Counter private _itemId;
     Counters.Counter private _itemsSold;
 
     address payable owner;
-    uint256 public mintingCost = 0.0001 ether;
+    uint256 public mintingCost = 0.0008 ether;
+    bool isPaused;
 
-    constructor(){
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+
+    constructor() {
         owner = payable(msg.sender);
+        // Grant the deployer the default admin role which allows for role management
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        // Assign the deployer the admin role
+        _setupRole(ADMIN_ROLE, msg.sender);
     }
 
     enum ListingStatus {
@@ -35,10 +43,41 @@ contract NFTMarket is ReentrancyGuard {
         uint256 price;
     }
 
-    struct UserProfile {
-    bytes32 emailHash; // Hash of the user's email for privacy
-    bytes32 nameHash;  // Hash of the user's name for privacy
-}
+struct UserProfile {
+        bytes firstname;
+        bytes lastname;
+        bytes email;
+        bytes password;
+    }
+
+    mapping(uint => _Item) public Items;
+   mapping(address => UserProfile) private userProfiles;
+   address[] private userAddresses; // To keep track of all user addresses
+    mapping(address => uint) createdPerWallet;
+    mapping(address => uint) ownedPerWallet;
+
+//Emit Events
+    event Item (
+        address nftContract,
+        address owner,
+        address creator,
+        uint256 token,
+        uint256 price
+    );
+
+    event CancelSell(
+        uint256 token,
+        address owner
+    );
+
+    event Sold(
+        address nftContract,
+        address owner,
+        address creator,
+        uint256 token,
+        uint256 price
+    );
+
 
 //Modifiers
     modifier hasCreatedItems {
@@ -67,56 +106,50 @@ contract NFTMarket is ReentrancyGuard {
         _;
     }
 
-//Emit Events
-    event Item (
-        address nftContract,
-        address owner,
-        address creator,
-        uint256 token,
-        uint256 price
-    );
+   // Function to set user profile with encrypted data
+function setUserProfile(
+    bytes memory _firstname, 
+    bytes memory _lastname, 
+    bytes memory _email ,
+    bytes memory _password
+) public {
+    require(_firstname.length > 0, "Firstname cannot be empty");
+    require(_lastname.length > 0, "Lastname cannot be empty");
+    require(_email.length > 0, "Email cannot be empty");
+    require(_password.length > 0, "Password cannot be empty");
 
-    event CancelSell(
-        uint256 token,
-        address owner
-    );
-
-    event Sold(
-        address nftContract,
-        address owner,
-        address creator,
-        uint256 token,
-        uint256 price
-    );
-
-    mapping(uint => _Item) public Items;
-    // Mapping from user's address to profile
-   mapping(address => UserProfile) private userProfiles;
-    mapping(address => uint) createdPerWallet;
-    mapping(address => uint) ownedPerWallet;
-
-    bool isPaused;
-
-    /**
- * @dev Function to set a user's profile
- * @param _emailHash Hash of the user's email
- * @param _nameHash Hash of the user's name
- */
-function setUserProfile(bytes32 _emailHash, bytes32 _nameHash) public {
-    // Ensure that neither the email hash nor the name hash is empty
-    require(_emailHash != 0 && _nameHash != 0, "Profile information cannot be empty");
-    userProfiles[msg.sender] = UserProfile(_emailHash, _nameHash);
+    userProfiles[msg.sender] = UserProfile(_firstname, _lastname, _email, _password);
 }
 
-/**
- * @dev Function to get a user's profile.
- * Only the owner of the contract can access user profile details for privacy reasons.
- * @param _userAddress Address of the user
- * @return UserProfile The user's profile
- */
-function getUserProfile(address _userAddress) public view onlyOwner returns (UserProfile memory) {
-    return userProfiles[_userAddress];
-}
+
+    // to get all users' profiles for admin
+    function getAllUserProfiles() public view returns (UserProfile[] memory) {
+        require(hasRole(ADMIN_ROLE, msg.sender), "Caller is not an admin");
+
+        UserProfile[] memory profiles = new UserProfile[](userAddresses.length);
+        for(uint i = 0; i < userAddresses.length; i++) {
+            profiles[i] = userProfiles[userAddresses[i]];
+        }
+        return profiles;
+    }
+
+    // to get all user addresses for admin
+    function getAllUserAddresses() public view returns (address[] memory) {
+        require(hasRole(ADMIN_ROLE, msg.sender), "Caller is not an admin");
+        return userAddresses;
+    }
+
+    //To create an admin user
+    function addAdmin(address _admin) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not a default admin");
+        grantRole(ADMIN_ROLE, _admin);
+    }
+
+    //to revoke an admin user
+    function revokeAdmin(address _admin) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not a default admin");
+        revokeRole(ADMIN_ROLE, _admin);
+    }
 
     function sellItem(string memory uri,uint256 _price,address _nftContract) public payable notPaused nonReentrant{
         require(_price > 0, "Price must be at least 1 wei");
@@ -148,17 +181,6 @@ function getUserProfile(address _userAddress) public view onlyOwner returns (Use
             _price
         );
 
-    }
-
-    function cancelSell(uint256 _tokenId) public isValidTokenId(_tokenId) notPaused {
-        _Item storage listedItem = Items[_tokenId];
-        require(msg.sender == listedItem.owner || msg.sender == listedItem.creator, "Only owner can cancel listing");
-        require(listedItem.status == ListingStatus.Active, "Listing is not active");
-
-        listedItem.status = ListingStatus.Cancelled;
-        IERC721(listedItem.nftContract).transferFrom(address(this), msg.sender, listedItem.token);
-
-        emit CancelSell(listedItem.token,listedItem.owner);
     }
 
     // Fetch all unsold items
@@ -195,6 +217,7 @@ function getUserProfile(address _userAddress) public view onlyOwner returns (Use
 
         return items;
     }
+
 
     // Fetch owner NFT's
     function fetchOwnerItemsListed() public view hasOwnerItems  returns (_Item[] memory) {
