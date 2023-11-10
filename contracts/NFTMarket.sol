@@ -51,10 +51,11 @@ struct UserProfile {
     }
 
     mapping(uint => _Item) public Items;
-   mapping(address => UserProfile) private userProfiles;
-   address[] private userAddresses; // To keep track of all user addresses
+    mapping(address => UserProfile) private userProfiles;
+    address[] private userAddresses; // To keep track of all user addresses
     mapping(address => uint) createdPerWallet;
     mapping(address => uint) ownedPerWallet;
+    mapping(address => bool) private addedToUserAddresses;
 
 //Emit Events
     event Item (
@@ -107,20 +108,25 @@ struct UserProfile {
     }
 
    // Function to set user profile with encrypted data
-function setUserProfile(
-    bytes memory _firstname, 
-    bytes memory _lastname, 
-    bytes memory _email ,
-    bytes memory _password
-) public {
-    require(_firstname.length > 0, "Firstname cannot be empty");
-    require(_lastname.length > 0, "Lastname cannot be empty");
-    require(_email.length > 0, "Email cannot be empty");
-    require(_password.length > 0, "Password cannot be empty");
+ function setUserProfile(
+        bytes memory _firstname, 
+        bytes memory _lastname, 
+        bytes memory _email,
+        bytes memory _password
+    ) public {
+        require(_firstname.length > 0, "Firstname cannot be empty");
+        require(_lastname.length > 0, "Lastname cannot be empty");
+        require(_email.length > 0, "Email cannot be empty");
+        require(_password.length > 0, "Password cannot be empty");
 
-    userProfiles[msg.sender] = UserProfile(_firstname, _lastname, _email, _password);
-}
+        userProfiles[msg.sender] = UserProfile(_firstname, _lastname, _email, _password);
 
+        // Add the user's address to userAddresses array if not already added
+        if (!addedToUserAddresses[msg.sender]) {
+            userAddresses.push(msg.sender);
+            addedToUserAddresses[msg.sender] = true;
+        }
+    }
 
     // to get all users' profiles for admin
     function getAllUserProfiles() public view returns (UserProfile[] memory) {

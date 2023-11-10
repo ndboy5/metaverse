@@ -2,8 +2,8 @@ import Image from "next/image";
 import { Inter } from "next/font/google";
 import About from "@/components/home/About";
 import { useDispatch } from "react-redux";
+import { initializeConnection } from "@/redux/slices/connectionSlice";
 import { useEffect } from "react";
-import { createItemAsync } from "@/redux/slices/marketSlice";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,12 +11,7 @@ export default function Home() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const items = dispatch(
-      createItemAsync({
-        url: "https://my-metaverse-development-prj.infura-ipfs.io/ipfs/QmWYFKGMbPWLhwtSiZzu7p4zhB9E2q3NzfBCFUmweovivT",
-        price: 0.01,
-      })
-    );
+    dispatch(initializeConnection());
   }, [dispatch]);
 
   return (

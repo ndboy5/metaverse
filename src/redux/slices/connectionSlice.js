@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ethers } from "ethers";
-import NFTMarketABI from "../abi/NFTMarket.json";
-import NFTABI from "../abi/NFT.json";
+import NFTMarketABI from "../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
+import NFTABI from "../../../artifacts/contracts/NFT.sol/NFT.json";
 
 const NFTMarketContractAddress = process.env.NEXT_PUBLIC_MARKETPLACE_ADDR;
 const NFTContractAddress = process.env.NEXT_PUBLIC_NFT_ADDR;
@@ -19,8 +19,16 @@ export const connectionSlice = createSlice({
   reducers: {
     initializeConnection: (state, action) => {
       state.provider = new ethers.providers.JsonRpcProvider(
-        process.env.SEPOLIA_RPC_URL
+        process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL
       );
+
+      //   console.log("SEPOLIA URL:", process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL);
+      //   console.log("SEPOLIA URL:", process.env.SEPOLIA_PRIVATE_KEY);
+      //   console.log("NFTMarketABI:", NFTMarketABI);
+      //   console.log("NFTABI:", NFTABI);
+      //   console.log("NFTMarketContractAddress:", NFTMarketContractAddress);
+      //   console.log("NFTContractAddress:", NFTContractAddress);
+
       state.signer = state.provider.getSigner();
       state.NFTMarketContract = new ethers.Contract(
         NFTMarketContractAddress,
