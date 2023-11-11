@@ -1,44 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { ethers } from "ethers";
+import axiosService from "../../services/AxiosService";
 
-// Define the initial state for the market slice
 const initialState = {
   marketItems: [],
   isLoading: false,
   error: null,
 };
 
-// Async thunk to fetch market items from the blockchain
-export const fetchMarketItems = createAsyncThunk(
-  "market/fetchMarketItems",
-  async (_, { getState }) => {
-    const state = getState();
-    // Get the contract instance from state
-    const { NFTMarketContract } = state.connection;
-    const items = await NFTMarketContract.fetchMarketItems();
-    // Serialize items to match the structure expected by the frontend
-    return items.map((item) => ({
-      status: item.status,
-      nftContract: item.nftContract,
-      owner: item.owner,
-      creator: item.creator,
-      token: item.token.toNumber(),
-      price: ethers.utils.formatEther(item.price),
-    }));
-  }
-);
-
-// Create the market slice
-export const marketSlice = createSlice({
+//Market slice to manage assets on block chain
+const marketSlice = createSlice({
   name: "market",
   initialState,
-  reducers: {
-    // Reducers go here
-  },
+  reducers: {},
   extraReducers: {
     [fetchMarketItems.pending]: (state) => {
       state.isLoading = true;
-      state.error = null;
     },
     [fetchMarketItems.fulfilled]: (state, action) => {
       state.isLoading = false;
@@ -46,9 +22,43 @@ export const marketSlice = createSlice({
     },
     [fetchMarketItems.rejected]: (state, action) => {
       state.isLoading = false;
-      state.error = action.error;
+      state.error = action.error.message;
+    },
+    [sellItem.pending]: (state) => {
+      state.isLoading = true;
     },
   },
 });
+
+//**Thunks */
+export const fetchCreatorItemsListed = createAsyncThunk(
+  "market/fetchCreatorItemsListed",
+  async () => {
+    const response = await axiosService.post("blockchain", {
+      action: "fetchCreatorItemsListed",
+    });
+    return response.data.data;
+  }
+);
+export const fetchMarketItems = createAsyncThunk(
+  "market/fetchMarketItems",
+  async () => {
+    const response = await axiosService.post("blockchain", {
+      action: "fetchMarketItems",
+    });
+    return response.data.data;
+  }
+);
+
+export const sellItem = createAsyncThunk(
+  "market/sellItem",
+  async (itemData) => {
+    const response = await axiosService.post("blockchain", {
+      action: "sellItem",
+      payload: itemData,
+    });
+    return response.data.data;
+  }
+);
 
 export default marketSlice.reducer;

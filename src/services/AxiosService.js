@@ -1,48 +1,27 @@
 import axios from "axios";
 
-class AxiosService {
-  constructor() {
-    const instance = axios.create();
-    instance.interceptors.request.use(this._handleRequest);
-    instance.interceptors.response.use(this._handleResponse, this._handleError);
-    this.instance = instance;
-  }
+const axiosService = axios.create({
+  baseURL: "/api/",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-  _handleRequest = (config) => {
-    //TODO:  authentication token to the request headers for server connections
-    const token = sessionStorage.getItem("token");
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${JSON.parse(token)}`;
+axiosService.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle errors
+    if (error.response) {
+      console.error("Data:", error.response.data);
+      console.error("Status:", error.response.status);
+      console.error("Headers:", error.response.headers);
+    } else if (error.request) {
+      console.error("Request:", error.request);
+    } else {
+      console.error("Error:", error.message);
     }
-
-    // Add Content-Type header for JSON data
-    config.headers["Content-Type"] = "application/json";
-
-    return config;
-  };
-
-  _handleResponse = (response) => {
-    return response.data;
-  };
-
-  _handleError = (error) => {
-    if (error.response.status === 401 || error.response.status === 403) {
-      window.location.replace("/");
-    }
-    return Promise.reject(error.response.data);
-  };
-
-  get(url, params) {
-    return this.instance.get(url, { params });
+    return Promise.reject(error);
   }
+);
 
-  post(url, data) {
-    return this.instance.post(url, data);
-  }
-
-  patch(url, data) {
-    return this.instance.patch(url, data);
-  }
-}
-
-export default new AxiosService();
+export default axiosService;
