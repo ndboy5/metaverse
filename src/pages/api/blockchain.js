@@ -72,14 +72,21 @@ export default async function handler(req, res) {
         case "createAsset":
           const file = fs.readFileSync(files["file"][0].filepath);
           const ipfsResponse = await client.add(file);
-          console.log(added);
           const url = `${infuraDedicatedEndpoint}/ipfs/${ipfsResponse.path}`;
+          console.log("URL", url);
           const price = ethers.utils.parseUnits(
             fields.price.toString(),
             "ether"
           );
           // to add other attributes and save on blockchain
-          await NFTMarketContract.sellItem(url, price, NFTContractAddress);
+          const mintingCost = ethers.utils.parseUnits("0.0008", "ether");
+          const transaction = await NFTMarketContract.sellItem(
+            url,
+            price,
+            NFTContractAddress,
+            { value: mintingCost }
+          );
+          await transaction.wait();
           res.status(200).json({ success: true, url: url });
           break;
 

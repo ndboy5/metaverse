@@ -22,22 +22,6 @@ export const fetchMarketItems = createAsyncThunk(
   }
 );
 
-// export const createAsset = createAsyncThunk(
-//   "market/createAsset",
-//   async ({ file, price }) => {
-//     const formData = new FormData();
-//     formData.append("file", file);
-//     formData.append("price", price);
-
-//     const response = await axiosService.post("blockchain", formData, {
-//       headers: {
-//         "Content-Type": "multipart/form-data",
-//       },
-//     });
-
-//     return response.data;
-//   }
-// );
 export const createAsset = createAsyncThunk(
   "market/createAsset",
   async ({ file, price }) => {
