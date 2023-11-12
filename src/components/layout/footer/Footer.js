@@ -2,7 +2,7 @@ import styles from "./Footer.module.css";
 
 function Footer() {
   return (
-    <div className={styles.container}>
+    <div className="container mx-auto">
       <div className={styles.textBlock}>
         <h1 className={styles.logo}>NFX</h1>
         Forem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis

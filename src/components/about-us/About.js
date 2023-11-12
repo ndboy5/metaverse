@@ -3,7 +3,7 @@ import styles from "./About.module.css";
 
 function About() {
   return (
-    <div className={styles.container}>
+    <div className="flex-row">
       <section className="text-center p-8">
         <h2 className="text-3xl text-green-200 font-black">Who We Are</h2>
         <article className="text-white text-sm mt-4">
@@ -13,7 +13,6 @@ function About() {
       </section>
 
       <div className="flex flex-wrap justify-center gap-4 mt-8">
-        {/* Example of a card */}
         <div className="card">
           <img src="/path-to-nft-image.jpg" alt="NFT Name" className="w-full" />
           <div className="card__details">
@@ -21,7 +20,6 @@ function About() {
             <p className="tag">Price: [NFT Price]</p>
           </div>
         </div>
-        {/* Repeat the card for each NFT */}
       </div>
     </div>
   );
