@@ -1,4 +1,4 @@
-import RegisterUser from "@/components/admin/RegisterUser";
+import RegisterUser from "@/components/forms/RegisterUser";
 
 const UserAdministration = () => {
   return <RegisterUser />;

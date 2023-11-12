@@ -4,7 +4,6 @@ import { ToastContainer, toast } from "react-toastify";
 import Image from "next/image";
 import Style from "./DropZone.module.css";
 import { useDispatch, useSelector } from "react-redux";
-// import { createAsset } from "../redux/slices/marketSlice";
 import { ethers } from "ethers";
 import IPFS from "ipfs-http-client";
 import { connectWallet } from "@/redux/slices/connectionSlice";

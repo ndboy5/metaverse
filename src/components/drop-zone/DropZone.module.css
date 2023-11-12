@@ -6,7 +6,7 @@
 }
 
 .DropZone_box{
-    border: 5px dotted var(--icons-color);
+    border: 5px dotted #b100bc;
    border-radius: 1rem;
     text-align: center;
     padding: 1rem;
