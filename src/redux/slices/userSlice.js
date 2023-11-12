@@ -1,6 +1,39 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosService from "../../services/AxiosService";
 
+/*** Thunks */
+// Async thunk to register a new user
+export const registerUser = createAsyncThunk(
+  "user/registerUser",
+  async ({ firstname, lastname, email, password, address }) => {
+    const response = await axiosService.post("blockchain", {
+      action: "registerUser",
+      payload: { firstname, lastname, email, password, address },
+    });
+    return response.data;
+  }
+);
+
+// Async thunk to fetch all users
+export const fetchUsers = createAsyncThunk("user/fetchUsers", async () => {
+  const response = await axiosService.post("blockchain", {
+    action: "fetchUsers",
+  });
+  return response.data;
+});
+
+// Async thunk to add an admin
+export const addAdmin = createAsyncThunk(
+  "user/addAdmin",
+  async (adminAddress) => {
+    const response = await axiosService.post("blockchain", {
+      action: "addAdmin",
+      payload: adminAddress,
+    });
+    return response.data;
+  }
+);
+
 // User slice
 const userSlice = createSlice({
   name: "user",
@@ -45,36 +78,5 @@ const userSlice = createSlice({
     },
   },
 });
-/*** Thunks */
-// Async thunk to register a new user
-export const registerUser = createAsyncThunk(
-  "user/registerUser",
-  async ({ firstname, lastname, email, password, address }) => {
-    const response = await axiosService.post("blockchain", {
-      action: "registerUser",
-      payload: { firstname, lastname, email, password, address },
-    });
-    return response.data;
-  }
-);
 
-// Async thunk to fetch all users
-export const fetchUsers = createAsyncThunk("user/fetchUsers", async () => {
-  const response = await axiosService.post("blockchain", {
-    action: "fetchUsers",
-  });
-  return response.data;
-});
-
-// Async thunk to add an admin
-export const addAdmin = createAsyncThunk(
-  "user/addAdmin",
-  async (adminAddress) => {
-    const response = await axiosService.post("blockchain", {
-      action: "addAdmin",
-      payload: adminAddress,
-    });
-    return response.data;
-  }
-);
 export default userSlice.reducer;

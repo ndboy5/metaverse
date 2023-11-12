@@ -52,7 +52,7 @@ struct UserProfile {
 
     mapping(uint => _Item) public Items;
     mapping(address => UserProfile) private userProfiles;
-    address[] private userAddresses; // To keep track of all user addresses
+    address[] private userAddresses; 
     mapping(address => uint) createdPerWallet;
     mapping(address => uint) ownedPerWallet;
     mapping(address => bool) private addedToUserAddresses;
@@ -96,7 +96,7 @@ struct UserProfile {
         _;
     }
 
-    //     pause all minting and selling actions
+    // pause all minting and selling actions
     modifier notPaused() {
         require(!isPaused, "Contract is paused");
         _;
@@ -107,7 +107,6 @@ struct UserProfile {
         _;
     }
 
-   // Function to set user profile with encrypted data
  function setUserProfile(
         bytes memory _firstname, 
         bytes memory _lastname, 
@@ -121,14 +120,14 @@ struct UserProfile {
 
         userProfiles[msg.sender] = UserProfile(_firstname, _lastname, _email, _password);
 
-        // Add the user's address to userAddresses array if not already added
+        // To the user's address to userAddresses array if not already added
         if (!addedToUserAddresses[msg.sender]) {
             userAddresses.push(msg.sender);
             addedToUserAddresses[msg.sender] = true;
         }
     }
 
-    // to get all users' profiles for admin
+    // To get all users' profiles for admin
     function getAllUserProfiles() public view returns (UserProfile[] memory) {
         require(hasRole(ADMIN_ROLE, msg.sender), "Caller is not an admin");
 
@@ -139,7 +138,7 @@ struct UserProfile {
         return profiles;
     }
 
-    // to get all user addresses for admin
+    // To get all user addresses for admin
     function getAllUserAddresses() public view returns (address[] memory) {
         require(hasRole(ADMIN_ROLE, msg.sender), "Caller is not an admin");
         return userAddresses;
@@ -151,7 +150,7 @@ struct UserProfile {
         grantRole(ADMIN_ROLE, _admin);
     }
 
-    //to revoke an admin user
+    //To revoke an admin user
     function revokeAdmin(address _admin) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not a default admin");
         revokeRole(ADMIN_ROLE, _admin);

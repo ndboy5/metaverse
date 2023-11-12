@@ -1,6 +1,61 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosService from "../../services/AxiosService";
 
+//**Thunks */
+export const fetchCreatorItemsListed = createAsyncThunk(
+  "market/fetchCreatorItemsListed",
+  async () => {
+    const response = await axiosService.post("blockchain", {
+      action: "fetchCreatorItemsListed",
+    });
+    return response.data.data;
+  }
+);
+
+export const fetchMarketItems = createAsyncThunk(
+  "market/fetchMarketItems",
+  async () => {
+    const response = await axiosService.post("blockchain", {
+      action: "fetchMarketItems",
+    });
+    return response.data.data;
+  }
+);
+
+// export const createAsset = createAsyncThunk(
+//   "market/createAsset",
+//   async ({ file, price }) => {
+//     const formData = new FormData();
+//     formData.append("file", file);
+//     formData.append("price", price);
+
+//     const response = await axiosService.post("blockchain", formData, {
+//       headers: {
+//         "Content-Type": "multipart/form-data",
+//       },
+//     });
+
+//     return response.data;
+//   }
+// );
+export const createAsset = createAsyncThunk(
+  "market/createAsset",
+  async ({ file, price }) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("price", price);
+    formData.append("action", "createAsset"); // Ensure this line is correctly appending the action
+
+    const response = await axiosService.post("blockchain", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  }
+);
+
 const initialState = {
   marketItems: [],
   isLoading: false,
@@ -24,41 +79,10 @@ const marketSlice = createSlice({
       state.isLoading = false;
       state.error = action.error.message;
     },
-    [sellItem.pending]: (state) => {
+    [createAsset.pending]: (state) => {
       state.isLoading = true;
     },
   },
 });
-
-//**Thunks */
-export const fetchCreatorItemsListed = createAsyncThunk(
-  "market/fetchCreatorItemsListed",
-  async () => {
-    const response = await axiosService.post("blockchain", {
-      action: "fetchCreatorItemsListed",
-    });
-    return response.data.data;
-  }
-);
-export const fetchMarketItems = createAsyncThunk(
-  "market/fetchMarketItems",
-  async () => {
-    const response = await axiosService.post("blockchain", {
-      action: "fetchMarketItems",
-    });
-    return response.data.data;
-  }
-);
-
-export const sellItem = createAsyncThunk(
-  "market/sellItem",
-  async (itemData) => {
-    const response = await axiosService.post("blockchain", {
-      action: "sellItem",
-      payload: itemData,
-    });
-    return response.data.data;
-  }
-);
 
 export default marketSlice.reducer;

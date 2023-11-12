@@ -1,7 +1,7 @@
-const { default: Navbar } = require("../navbar/Navbar");
+import NavBar from "../navbar/Navbar";
 
 const Header = () => {
-  return <Navbar />;
+  return <NavBar />;
 };
 
 export default Header;

@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./NewAssetForm.module.css";
+import AssetUpload from "./AssetUpload";
 
 const NewAssetForm = () => {
   return (
@@ -73,6 +74,8 @@ const NewAssetForm = () => {
           >
             Create NFT
           </button>
+
+          <AssetUpload />
         </div>
       </form>
     </div>

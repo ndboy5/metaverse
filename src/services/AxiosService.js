@@ -2,9 +2,6 @@ import axios from "axios";
 
 const axiosService = axios.create({
   baseURL: "/api/",
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 axiosService.interceptors.response.use(
