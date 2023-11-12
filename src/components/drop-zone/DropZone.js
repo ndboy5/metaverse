@@ -3,31 +3,63 @@ import { useDropzone } from "react-dropzone";
 import { ToastContainer, toast } from "react-toastify";
 import Image from "next/image";
 import Style from "./DropZone.module.css";
+import { useDispatch, useSelector } from "react-redux";
+// import { createAsset } from "../redux/slices/marketSlice";
+import { ethers } from "ethers";
+import IPFS from "ipfs-http-client";
+import { connectWallet } from "@/redux/slices/connectionSlice";
 import { createAsset } from "@/redux/slices/marketSlice";
-import { useDispatch } from "react-redux";
 
 const DropZone = ({ title, heading, subHeading }) => {
   const dispatch = useDispatch();
   const [price, setPrice] = useState(5);
+  const { account, signer } = useSelector((state) => state.connection);
 
   const onDrop = useCallback(
     async (acceptedFiles) => {
+      if (!account) {
+        dispatch(connectWallet());
+        return;
+      }
+
       const file = acceptedFiles[0];
       if (file && price) {
-        dispatch(createAsset({ file, price }));
+        try {
+          // Upload to IPFS
+          const ipfs = IPFS({
+            host: "ipfs.infura.io",
+            port: 5001,
+            protocol: "https",
+          });
+          const added = await ipfs.add(file);
+          const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+
+          // Create NFT on blockchain
+          const priceInEther = ethers.utils.parseUnits(
+            price.toString(),
+            "ether"
+          );
+          const transaction = await createAsset({ url, priceInEther, signer });
+          await transaction.wait();
+
+          toast("NFT created successfully!");
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          toast.error("Error uploading file.");
+        }
       } else {
-        toast("Please complete reqquired details on form");
-        console.error("error occured");
+        toast("Please complete required details on form");
       }
     },
-    [dispatch, price]
+    [dispatch, account, price, signer]
   );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: "image/*", //TODO: Test other file types
+    accept: "image/*",
     maxSize: 5000000,
   });
+
   return (
     <div className={Style.DropZone}>
       <div className={Style.DropZone_box} {...getRootProps()}>
@@ -41,7 +73,6 @@ const DropZone = ({ title, heading, subHeading }) => {
               width={100}
               height={100}
               objectFit="contain"
-              className={Style.DropZone_box_input_img_img}
             />
           </div>
           <p>{heading}</p>

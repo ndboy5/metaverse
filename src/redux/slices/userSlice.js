@@ -15,22 +15,54 @@ export const registerUser = createAsyncThunk(
 );
 
 // Async thunk to fetch all users
-export const fetchUsers = createAsyncThunk("user/fetchUsers", async () => {
-  const response = await axiosService.post("blockchain", {
-    action: "fetchUsers",
-  });
-  return response.data;
-});
+export const fetchUsers = createAsyncThunk(
+  "user/fetchUsers",
+  async (_, { getState }) => {
+    const { account, networkId } = getState().connection;
+    if (!account) throw new Error("Wallet not connected");
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const NFTMarketContract = new ethers.Contract(
+      NFTMarketContractAddress,
+      NFTMarketABI.abi,
+      signer
+    );
+    const users = await NFTMarketContract.getAllUserProfiles();
+    return users.map((item) => ({
+      // status: item.status,
+      // nftContract: item.nftContract,
+      // owner: item.owner,
+      // creator: item.creator,
+      // token: item.token.toNumber(),
+      // price: ethers.utils.formatEther(item.price),
+    }));
+  }
+);
 
 // Async thunk to add an admin
 export const addAdmin = createAsyncThunk(
   "user/addAdmin",
-  async (adminAddress) => {
-    const response = await axiosService.post("blockchain", {
-      action: "addAdmin",
-      payload: adminAddress,
-    });
-    return response.data;
+  async ({ adminAddress }, { getState }) => {
+    const { account, networkId } = getState().connection;
+    if (!account) throw new Error("Wallet not connected");
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const NFTMarketContract = new ethers.Contract(
+      NFTMarketContractAddress,
+      NFTMarketABI.abi,
+      signer
+    );
+    const items = await NFTMarketContract.addAdmin(adminAddress);
+    return items.map((item) => ({
+      // status: item.status,
+      // nftContract: item.nftContract,
+      // owner: item.owner,
+      // creator: item.creator,
+      // token: item.token.toNumber(),
+      // price: ethers.utils.formatEther(item.price),
+    }));
   }
 );
 

@@ -1,42 +1,84 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosService from "../../services/AxiosService";
+import { ethers } from "ethers";
+import NFTMarketABI from "../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
+
+const NFTMarketContractAddress = process.env.NEXT_PUBLIC_MARKETPLACE_ADDR;
 
 //**Thunks */
 export const fetchCreatorItemsListed = createAsyncThunk(
   "market/fetchCreatorItemsListed",
-  async () => {
-    const response = await axiosService.post("blockchain", {
-      action: "fetchCreatorItemsListed",
-    });
-    return response.data.data;
+  async (_, { getState }) => {
+    const { account, networkId } = getState().connection;
+    if (!account) throw new Error("Wallet not connected");
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const NFTMarketContract = new ethers.Contract(
+      NFTMarketContractAddress,
+      NFTMarketABI.abi,
+      signer
+    );
+
+    const items = await NFTMarketContract.fetchCreatorItemsListed();
+    return items.map((item) => ({
+      status: item.status,
+      nftContract: item.nftContract,
+      owner: item.owner,
+      creator: item.creator,
+      token: item.token.toNumber(),
+      price: ethers.utils.formatEther(item.price),
+    }));
   }
 );
 
 export const fetchMarketItems = createAsyncThunk(
   "market/fetchMarketItems",
-  async () => {
-    const response = await axiosService.post("blockchain", {
-      action: "fetchMarketItems",
-    });
-    return response.data.data;
+  async (_, { getState }) => {
+    const { account, networkId } = getState().connection;
+    if (!account) throw new Error("Wallet not connected");
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const NFTMarketContract = new ethers.Contract(
+      NFTMarketContractAddress,
+      NFTMarketABI.abi,
+      signer
+    );
+
+    const items = await NFTMarketContract.fetchMarketItems();
+    return items.map((item) => ({
+      status: item.status,
+      nftContract: item.nftContract,
+      owner: item.owner,
+      creator: item.creator,
+      token: item.token.toNumber(),
+      price: ethers.utils.formatEther(item.price),
+    }));
   }
 );
 
 export const createAsset = createAsyncThunk(
   "market/createAsset",
-  async ({ file, price }) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("price", price);
-    formData.append("action", "createAsset"); // Ensure this line is correctly appending the action
+  async ({ url, price }, { getState }) => {
+    const { account, networkId } = getState().connection;
+    if (!account) throw new Error("Wallet not connected");
 
-    const response = await axiosService.post("blockchain", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const NFTMarketContract = new ethers.Contract(
+      NFTMarketContractAddress,
+      NFTMarketABI.abi,
+      signer
+    );
+    const mintingCost = ethers.utils.parseUnits("0.0008", "ether");
+    const parsedPrice = ethers.utils.parseUnits(price, "ether");
+
+    const transaction = await NFTMarketContract.sellItem(url, parsedPrice, {
+      value: mintingCost,
     });
+    await transaction.wait();
 
-    return response.data;
+    return { url, price };
   }
 );
 
@@ -52,6 +94,17 @@ const marketSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
+    [fetchCreatorItemsListed.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [fetchCreatorItemsListed.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.creatorItems = action.payload;
+    },
+    [fetchCreatorItemsListed.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    },
     [fetchMarketItems.pending]: (state) => {
       state.isLoading = true;
     },

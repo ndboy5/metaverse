@@ -56,19 +56,6 @@ export default async function handler(req, res) {
 
       const action = fields["action"][0];
       switch (action) {
-        case "fetchMarketItems":
-          const items = await NFTMarketContract.fetchMarketItems();
-          const serializedItems = items.map((item) => ({
-            status: item.status,
-            nftContract: item.nftContract,
-            owner: item.owner,
-            creator: item.creator,
-            token: item.token.toNumber(),
-            price: ethers.utils.formatEther(item.price),
-          }));
-          res.status(200).json({ success: true, data: serializedItems });
-          break;
-
         case "createAsset":
           const file = fs.readFileSync(files["file"][0].filepath);
           const ipfsResponse = await client.add(file);
@@ -78,7 +65,7 @@ export default async function handler(req, res) {
             fields.price.toString(),
             "ether"
           );
-          // to add other attributes and save on blockchain
+          //TODO: to add other attributes and save on blockchain
           const mintingCost = ethers.utils.parseUnits("0.0008", "ether");
           const transaction = await NFTMarketContract.sellItem(
             url,
