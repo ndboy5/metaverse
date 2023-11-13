@@ -14,7 +14,10 @@ export const connectWallet = createAsyncThunk(
       });
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const network = await provider.getNetwork();
-      return { account: accounts[0], networkId: network.chainId };
+      return {
+        account: accounts[0],
+        networkId: network.chainId,
+      };
     } catch (error) {
       return rejectWithValue(error.message);
     }

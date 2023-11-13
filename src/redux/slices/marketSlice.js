@@ -64,12 +64,14 @@ export const createAsset = createAsyncThunk(
     if (!account) throw new Error("Wallet not connected");
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
+    const signer = await provider.getSigner();
+    console.log(signer);
     const NFTMarketContract = new ethers.Contract(
       NFTMarketContractAddress,
       NFTMarketABI.abi,
       signer
     );
+
     const mintingCost = ethers.utils.parseUnits("0.0008", "ether");
     const parsedPrice = ethers.utils.parseUnits(price, "ether");
 

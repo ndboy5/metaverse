@@ -1,28 +1,11 @@
-.container {
+/* .container {
   background-image: url('/images/gradient-4.jpg');
   background-size: cover;
   background-position: top;
   min-height: 100vh;
   padding: 2rem;
-}
+} */
 
-.card {
-  background-color: #3D3D3E;
-  border: 1px solid #bacdd8;
-  border-radius: 12px;
-  overflow: hidden;
-  max-width: 300px;
-  color: #fff;
-  margin: 0 auto;
-}
-
-.card img {
-  width: 100%;
-}
-
-.card__details {
-  padding: 1rem;
-}
 
 .name {
   font-size: 20px;

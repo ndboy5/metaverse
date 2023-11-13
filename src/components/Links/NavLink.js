@@ -3,7 +3,7 @@ import React from "react";
 
 const NavLink = ({ title, to, style }) => {
   return (
-    <div classNamed={`item button ${style ? style : ""}`}>
+    <div className={`item button ${style ? style : ""}`}>
       <Link href={to ? to : "#"}>{title}</Link>
     </div>
   );

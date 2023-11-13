@@ -5,14 +5,20 @@ import Image from "next/image";
 import Style from "./DropZone.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { ethers } from "ethers";
-import IPFS from "ipfs-http-client";
 import { connectWallet } from "@/redux/slices/connectionSlice";
+import { create } from "ipfs-http-client";
 import { createAsset } from "@/redux/slices/marketSlice";
 
 const DropZone = ({ title, heading, subHeading }) => {
   const dispatch = useDispatch();
   const [price, setPrice] = useState(5);
-  const { account, signer } = useSelector((state) => state.connection);
+  const { account, networkId } = useSelector((state) => state.connection);
+  const endPointUrl = process.env.NEXT_PUBLIC_INFURA_DEDICATED_ENDPOINT;
+
+  const projectId = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID;
+  const projectSecret = process.env.NEXT_PUBLIC_INFURA_PRIVATE_KEY; //TODO: Optionally use API route in blockchain.js
+  const auth =
+    "Basic " + Buffer.from(projectId + ":" + projectSecret).toString("base64");
 
   const onDrop = useCallback(
     async (acceptedFiles) => {
@@ -25,20 +31,26 @@ const DropZone = ({ title, heading, subHeading }) => {
       if (file && price) {
         try {
           // Upload to IPFS
-          const ipfs = IPFS({
+          const ipfs = create({
             host: "ipfs.infura.io",
             port: 5001,
             protocol: "https",
+            headers: {
+              authorization: auth,
+            },
           });
           const added = await ipfs.add(file);
-          const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+          const url = endPointUrl + `/ipfs/${added.path}`;
 
           // Create NFT on blockchain
           const priceInEther = ethers.utils.parseUnits(
             price.toString(),
             "ether"
           );
-          const transaction = await createAsset({ url, priceInEther, signer });
+          const transaction = await dispatch(
+            createAsset({ url, priceInEther, account })
+          );
+          console.log(transaction);
           await transaction.wait();
 
           toast("NFT created successfully!");
@@ -50,7 +62,7 @@ const DropZone = ({ title, heading, subHeading }) => {
         toast("Please complete required details on form");
       }
     },
-    [dispatch, account, price, signer]
+    [dispatch, account, price]
   );
 
   const { getRootProps, getInputProps } = useDropzone({

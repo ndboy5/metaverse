@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { AiOutlineSortAscending } from "react-icons";
 
 const DataTable = ({ data, columns, onRowClick }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -100,19 +101,19 @@ const DataTable = ({ data, columns, onRowClick }) => {
                   {sortColumn === column.label ? (
                     isSortDesc ? (
                       <>
-                        {/* <i className="text-12 i-Down1"></i> */}
-                        {/* <i className={`text-12 i-Up1 text-black sorting-icon-color`}></i> */}
+                        <i className="AiOutlineSortAscending"></i>
+                        <i className="AiOutlineSortDescending"></i>
                       </>
                     ) : (
                       <>
-                        {/* <i className="text-12 i-Down1 text-black sorting-icon-color"></i> */}
-                        {/* <i className={`text-12 i-Up1 text-muted`}></i> */}
+                        <i className="AiOutlineSortDescending"></i>
+                        <i className="AiOutlineSortAscending"></i>
                       </>
                     )
                   ) : (
                     <>
-                      {/* <i className={`text-12 i-Up1 text-muted`}></i> */}
-                      {/* <i className={`text-12 i-Down1 text-muted`}></i> */}
+                      <i className="AiOutlineSortDescending"></i>
+                      <i className="AiOutlineSortAscending"></i>
                     </>
                   )}
                 </span>

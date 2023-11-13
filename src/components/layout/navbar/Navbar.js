@@ -2,12 +2,17 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "./NavBar.module.css";
 import Link from "next/link";
 import NavLink from "@/components/Links/NavLink";
+import { connectWallet } from "@/redux/slices/connectionSlice";
 
 function Navbar() {
   const dispatch = useDispatch();
 
   const { account, isConnected } = useSelector((state) => state.connection);
 
+  const onClickConnectBtn = () => {
+    console.log("Runs here");
+    if (!isConnected) dispatch(connectWallet());
+  };
   return (
     <nav>
       <ul className="menu">
@@ -46,11 +51,9 @@ function Navbar() {
         <li className="item links">
           <a href="#">Work In Metaverse</a>
         </li>
-        {!isConnected && (
-          <li className="item button">
-            <a href="#">Sign In</a>
-          </li>
-        )}
+        <li className="item button">
+          <Link href="#">{`${isConnected ? "Connected" : "Sign In"}`}</Link>
+        </li>
         <li className="item button secondary">
           {isConnected ? (
             <NavLink

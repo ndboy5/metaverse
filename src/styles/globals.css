@@ -2,10 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+:root{
+  --icons-color: #B100BC;
+  --icons-light-color: #BB22C357;
+  --icons-bg-color: #BB22C3;
+  --shadow-dark-color: #3f3c3f;
+  --bg-shadow-dark-color: #3f3c3f;
+  --shadow-light-color: #30154E;
+  --main-bg-color: #30154E;
 
+  --box-shadow: 1px 1px 2px #BB22C3,
+  -1px -1px 2px #BB22C3;
 
-body {
- 
+  --box-shadow-2:1px 1px 2px #BB22C3,
+  -1px -1px 2px #BB22C3;
+
 }
 
 /* Basic styling */
@@ -99,7 +110,7 @@ nav {
   border-radius: 50px;
   font-weight: 600;
   color: #fff;
-  background-color: #b100bc;
+  background-color: var(--icons-color);
   margin: 0 auto;
   display: block;
   cursor: pointer;
@@ -200,6 +211,7 @@ nav {
   }
   .logo {
     flex: 1;
+    order: 0;
   }
   .item.button {
     width: auto;
@@ -211,13 +223,12 @@ nav {
     text-align: right;
     order: 2;
   }
-  /* Button up from tablet screen */
   .menu li.button a {
     padding: 10px 15px;
     margin: 5px 0;
   }
   .button a {
-    background: #b100bc;
+    background: var(--icons-color);
     border-radius: 16px;
     color: #fff;
     text-decoration: none;
@@ -248,7 +259,6 @@ nav {
     background: none;
   }
   .logo {
-    order: 0;
   }
   .item {
     order: 1;

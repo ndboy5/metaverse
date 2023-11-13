@@ -16,7 +16,6 @@ function RegisterUser() {
   
   return (
   <form className={styles.container}>
-          <button  className={styles.backButton}>Back</button> 
      <div className={styles.header}>
         <div className={styles.title}>REGISTER USER</div>
         <div className={styles.description}>
